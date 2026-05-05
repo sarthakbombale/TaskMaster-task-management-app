@@ -1,8 +1,8 @@
-
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate, useLocation } from "react-router-dom";
 
 function Navbar() {
   const navigate = useNavigate();
+  const location = useLocation();
   const token = localStorage.getItem("token");
   const user = JSON.parse(localStorage.getItem("user"));
 
@@ -12,92 +12,85 @@ function Navbar() {
     navigate("/");
   };
 
+  // Helper to highlight active link
+  const isActive = (path) => location.pathname === path ? "active border-bottom border-2" : "";
+
   return (
-    <nav
-      className="navbar navbar-expand-lg px-3 shadow"
-      style={{
-        background: "linear-gradient(135deg, #14cba8, #3a86ff, #6a00f4)",
+    <nav className="navbar navbar-expand-lg sticky-top shadow-sm py-2" 
+      style={{ 
+        background: "rgba(255, 255, 255, 0.95)", 
+        backdropFilter: "blur(10px)",
+        borderBottom: "1px solid #e0e0e0" 
       }}
     >
-      {/* Logo */}
-      <Link
-        className="navbar-brand d-flex align-items-center text-white fw-bold"
-        to="/dashboard"
-      >
-        <img
-          src="https://i.redd.it/hi-this-is-a-logo-for-the-task-manager-application-called-v0-si3hzlaglc7b1.png?width=8113&format=png&auto=webp&s=750d601f5c083ada2e639535f6b0576fbcb2dc31"
-          alt="logo"
-          style={{ width: "38px", marginRight: "8px", borderRadius: "8px" }}
-        />
-        TaskFlow
-      </Link>
+      <div className="container">
+        {/* Brand/Logo */}
+        <Link className="navbar-brand d-flex align-items-center" to="/dashboard">
+          <div className="bg-primary p-1 rounded-3 me-2 d-flex align-items-center justify-content-center" style={{ width: "35px", height: "35px" }}>
+             <i className="bi bi-check2-square text-white fs-5"></i>
+          </div>
+          <span className="fw-bold fs-4 tracking-tight text-dark">Task<span className="text-primary">Master</span></span>
+        </Link>
 
-      {/* ✅ Mobile Toggle Button */}
-      <button
-        className="navbar-toggler border-0"
-        type="button"
-        data-bs-toggle="collapse"
-        data-bs-target="#navbarContent"
-      >
-        <span className="navbar-toggler-icon"></span>
-      </button>
+        {/* Mobile Toggle */}
+        <button 
+          className="navbar-toggler border-0 shadow-none" 
+          type="button" 
+          data-bs-toggle="collapse" 
+          data-bs-target="#navbarContent"
+        >
+          <span className="navbar-toggler-icon"></span>
+        </button>
 
-      {/* ✅ Collapsible Content */}
-      <div className="collapse navbar-collapse" id="navbarContent">
-        <div className="ms-auto d-flex align-items-lg-center flex-column flex-lg-row mt-3 mt-lg-0">
-
-          {token ? (
-            <>
-              {/* User */}
-              <span className="text-white fw-semibold me-lg-3 mb-2 mb-lg-0 text-center">
-                Hi, {user?.name || "User"}
-              </span>
-
-              {/* Buttons */}
-              <Link
-                className="btn btn-light fw-semibold me-lg-2 mb-2 mb-lg-0"
-                to="/dashboard"
-              >
-                Dashboard
-              </Link>
-
-              <Link
-                className="btn btn-light fw-semibold me-lg-3 mb-2 mb-lg-0"
-                to="/create"
-              >
-                New Task
-              </Link>
-
-              <button
-                className="btn fw-semibold"
-                style={{
-                  background: "#ff4d4f",
-                  color: "white",
-                  border: "none",
-                }}
-                onClick={handleLogout}
-              >
-                Logout
-              </button>
-            </>
-          ) : (
-            <>
-              <Link
-                className="btn btn-light fw-semibold me-lg-2 mb-2 mb-lg-0"
-                to="/"
-              >
-                Login
-              </Link>
-
-              <Link
-                className="btn btn-light fw-semibold"
-                to="/register"
-              >
-                Register
-              </Link>
-            </>
-          )}
-
+        {/* Links & Auth */}
+        <div className="collapse navbar-collapse" id="navbarContent">
+          <ul className="navbar-nav ms-auto align-items-center">
+            {token ? (
+              <>
+                <li className="nav-item px-2">
+                  <Link className={`nav-link fw-medium text-secondary ${isActive('/dashboard')}`} to="/dashboard">
+                    Dashboard
+                  </Link>
+                </li>
+                <li className="nav-item px-2">
+                  <Link className={`nav-link fw-medium text-secondary ${isActive('/create')}`} to="/create">
+                    Create Task
+                  </Link>
+                </li>
+                
+                {/* User Profile Dropdown */}
+                <li className="nav-item dropdown ms-lg-3 mt-2 mt-lg-0">
+                  <button 
+                    className="btn btn-outline-primary dropdown-toggle d-flex align-items-center gap-2 rounded-pill px-3" 
+                    id="userDropdown" 
+                    data-bs-toggle="dropdown" 
+                    aria-expanded="false"
+                  >
+                    <i className="bi bi-person-circle"></i>
+                    <span>{user?.name || "Account"}</span>
+                  </button>
+                  <ul className="dropdown-menu dropdown-menu-end shadow border-0 mt-2" aria-labelledby="userDropdown">
+                    <li><h6 className="dropdown-header">Manage Profile</h6></li>
+                    <li><hr className="dropdown-divider" /></li>
+                    <li>
+                      <button className="dropdown-item text-danger d-flex align-items-center gap-2" onClick={handleLogout}>
+                        <i className="bi bi-box-arrow-right"></i> Logout
+                      </button>
+                    </li>
+                  </ul>
+                </li>
+              </>
+            ) : (
+              <div className="d-flex gap-2">
+                <Link className="btn btn-link text-decoration-none text-dark fw-semibold" to="/">
+                  Login
+                </Link>
+                <Link className="btn btn-primary rounded-pill px-4 shadow-sm fw-semibold" to="/register">
+                  Join Free
+                </Link>
+              </div>
+            )}
+          </ul>
         </div>
       </div>
     </nav>
@@ -105,5 +98,3 @@ function Navbar() {
 }
 
 export default Navbar;
-
-

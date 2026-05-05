@@ -14,12 +14,28 @@ function Register() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+
+    // Client-side validation
+    if (!form.name || !form.email || !form.password) {
+      toast.error("All fields are required ⚠️");
+      return;
+    }
+
+    if (form.password.length < 6) {
+      toast.error("Password must be at least 6 characters long ⚠️");
+      return;
+    }
+
     try {
-      await axios.post("http://localhost:5000/api/auth/register", form);
+      console.log("Sending registration request:", form);
+      const response = await axios.post("http://localhost:5000/api/auth/register", form);
+      console.log("Registration response:", response.data);
+
       toast.success("Registered successfully 🚀");
       setTimeout(() => navigate("/"), 1500);
     } catch (err) {
-      toast.error(err.response?.data?.msg || "Something went wrong ❌");
+      console.error("Registration error:", err);
+      toast.error(err.response?.data?.msg || err.response?.data?.error || "Something went wrong ❌");
     }
   };
 

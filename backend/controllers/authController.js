@@ -15,21 +15,26 @@ const generateToken = (id) => {
 // ✅ REGISTER
 exports.register = async (req, res) => {
     try {
+        console.log("Registration attempt:", { name: req.body.name, email: req.body.email });
+
         const { name, email, password } = req.body;
 
         // validation
         if (!name || !email || !password) {
+            console.log("Validation failed: missing fields");
             return res.status(400).json({ msg: "All fields are required" });
         }
 
         // check existing user
         const userExists = await User.findOne({ email });
         if (userExists) {
+            console.log("User already exists:", email);
             return res.status(400).json({ msg: "User already exists" });
         }
 
         // hash password
         const hashedPassword = await bcrypt.hash(password, 10);
+        console.log("Password hashed successfully");
 
         // create user
         const user = await User.create({
@@ -38,6 +43,8 @@ exports.register = async (req, res) => {
             password: hashedPassword,
         });
 
+        console.log("User created successfully:", user._id);
+
         res.status(201).json({
             msg: "User registered successfully",
             user: {
@@ -45,12 +52,12 @@ exports.register = async (req, res) => {
                 name: user.name,
                 email: user.email
             },
-            token: generateToken(user._id) // 🔥 auto login after register
+            token: generateToken(user._id)
         });
 
     } catch (err) {
         console.error("Register Error:", err.message);
-        res.status(500).json({ error: "Server error" });
+        res.status(500).json({ error: "Server error", details: err.message });
     }
 };
 
