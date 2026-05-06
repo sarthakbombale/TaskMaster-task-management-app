@@ -28,6 +28,7 @@ function TaskDetail() {
         const res = await API.get(`/tasks/${id}`);
         setTask(res.data);
       } catch (err) {
+        console.log(err);
         toast.error("Failed to load task details");
       } finally {
         setLoading(false);

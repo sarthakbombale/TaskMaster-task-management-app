@@ -14,27 +14,18 @@ function Login() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-
     if (!form.email || !form.password) {
       toast.error("All fields are required ⚠️");
       return;
     }
-
     try {
-      const res = await axios.post(
-        "http://localhost:5000/api/auth/login",
-        form
-      );
-
+      const res = await axios.post("http://localhost:5000/api/auth/login", form);
       localStorage.setItem("token", res.data.token);
       localStorage.setItem("user", JSON.stringify(res.data.user));
-
-      toast.success("Login successful 🚀");
-
+      toast.success("Login successful");
       setTimeout(() => navigate("/dashboard"), 1500);
-
     } catch (err) {
-      toast.error(err.response?.data?.msg || "Login failed ❌");
+      toast.error(err.response?.data?.msg || "Login failed");
     }
   };
 
@@ -42,49 +33,71 @@ function Login() {
     <div
       className="container-fluid vh-100 d-flex justify-content-center align-items-center"
       style={{
-        background: "linear-gradient(135deg, #14cba8, #3a86ff, #6a00f4)",
+        background: "radial-gradient(circle at top right, #afe0d7, #0e1115, #dbbfff)",
       }}
     >
       <ToastContainer position="top-right" autoClose={2000} />
 
-      <div className="card shadow-lg p-4" style={{ width: "350px", borderRadius: "15px" }}>
-        <h3 className="text-center mb-4 fw-bold">Login</h3>
+      <div 
+        className="card shadow-lg p-4 border-0" 
+        style={{ 
+            width: "380px", 
+            borderRadius: "24px", 
+            backgroundColor: "rgba(255, 255, 255, 0.9)",
+            backdropFilter: "blur(12px)"
+        }}
+      >
+        <div className="text-center mb-4">
+            <h3 className="fw-bold text-dark mb-1">Welcome Back</h3>
+            <p className="text-muted small">Enter your credentials to continue</p>
+        </div>
 
         <form onSubmit={handleSubmit}>
-          <input
-            className="form-control mb-3"
-            name="email"
-            placeholder="Email"
-            onChange={handleChange}
-            value={form.email}
-          />
+          <div className="mb-3">
+            <label className="form-label small fw-semibold text-secondary">Email Address</label>
+            <input
+              className="form-control bg-light border-0 py-2 shadow-sm"
+              style={{ borderRadius: "10px" }}
+              name="email"
+              placeholder="Email"
+              onChange={handleChange}
+              value={form.email}
+            />
+          </div>
 
-          <input
-            className="form-control mb-3"
-            name="password"
-            type="password"
-            placeholder="Password"
-            onChange={handleChange}
-            value={form.password}
-          />
+          <div className="mb-4">
+            <label className="form-label small fw-semibold text-secondary">Password</label>
+            <input
+              className="form-control bg-light border-0 py-2 shadow-sm"
+              style={{ borderRadius: "10px" }}
+              name="password"
+              type="password"
+              placeholder="Password"
+              onChange={handleChange}
+              value={form.password}
+            />
+          </div>
 
           <button
-            className="btn w-100 text-white fw-bold"
+            className="btn w-100 text-white fw-bold py-2 shadow"
             style={{
-              background: "linear-gradient(135deg, #14cba8, #3a86ff, #6a00f4)",
+              background: "linear-gradient(135deg, #0e1115, #3a86ff)",
               border: "none",
+              borderRadius: "12px"
             }}
           >
             Login
           </button>
         </form>
 
-        <p className="mt-3 text-center">
-          Don't have an account?{" "}
-          <Link to="/register" className="fw-semibold">
-            Register
-          </Link>
-        </p>
+        <div className="mt-4 text-center">
+          <p className="small text-muted">
+            Don't have an account?{" "}
+            <Link to="/register" className="text-primary fw-bold text-decoration-none">
+              Register Now
+            </Link>
+          </p>
+        </div>
       </div>
     </div>
   );
